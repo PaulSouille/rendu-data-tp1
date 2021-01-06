@@ -39,9 +39,10 @@ class matplotlibSwitchGraphs:
         self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
         self.button = Button(self.master, text="Quit", command=self._quit)
         self.button.pack(side=BOTTOM)
-        self.button_switch = Button(self.master, text="Switch Graphs", command=self.switch_graphs)
-        self.button_switch.pack(side=BOTTOM)
-
+        self.button_back = Button(self.master, text="Graphique précédent", command=self.back_graph)
+        self.button_back.pack(side=BOTTOM)
+        self.button_next = Button(self.master, text="Graphique suivant", command=self.next_graph)
+        self.button_next.pack(side=BOTTOM)
     def draw_graph(self, month):
         self.ax.clear()
         self.ax.plot(df[month])
@@ -54,7 +55,7 @@ class matplotlibSwitchGraphs:
     def _quit(self):
         self.master.quit() 
 
-    def switch_graphs(self):
+    def next_graph(self):
         if self.graphIndex == 0:
             self.draw_graph('février')
             self.graphIndex = 1
@@ -92,6 +93,43 @@ class matplotlibSwitchGraphs:
             self.draw_graph('janvier')
             self.graphIndex = 0
 
+    def back_graph(self):
+        if self.graphIndex == 0:
+            self.draw_graph('décembre')
+            self.graphIndex = 11
+        elif self.graphIndex == 11:
+            self.draw_graph('novembre')
+            self.graphIndex = 10
+        elif self.graphIndex == 10:
+            self.draw_graph('octobre')
+            self.graphIndex = 9
+        elif self.graphIndex == 9:
+            self.draw_graph('septembre')
+            self.graphIndex = 8
+        elif self.graphIndex == 8:
+            self.draw_graph('août')
+            self.graphIndex = 7
+        elif self.graphIndex == 7:
+            self.draw_graph('juillet')
+            self.graphIndex = 6
+        elif self.graphIndex == 6:
+            self.draw_graph('juin')
+            self.graphIndex = 5
+        elif self.graphIndex == 5:
+            self.draw_graph('mai')
+            self.graphIndex = 4
+        elif self.graphIndex == 4:
+            self.draw_graph('avril')
+            self.graphIndex = 3
+        elif self.graphIndex == 3:
+            self.draw_graph('mars')
+            self.graphIndex = 2
+        elif self.graphIndex == 2:
+            self.draw_graph('février')
+            self.graphIndex = 1
+        elif self.graphIndex == 1:
+            self.draw_graph('janvier')
+            self.graphIndex = 0
 
 
 def main():
@@ -101,7 +139,6 @@ def main():
 
 def show_graph():
     main()
-    fenetre.destroy()
 
 fenetre = Tk()
 fenetre.title("Data tp 1")
