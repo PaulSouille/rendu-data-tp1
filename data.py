@@ -12,7 +12,6 @@ from pandas import ExcelFile
 df = pd.read_excel('Climat.xlsx', skiprows = 2,  nrows= 32, usecols = 'C:O')
 df = df.drop(df.index[0])
 df.drop(df.columns[0], axis=1, inplace=True)
-moyenne = 12
 
 
 def config_plot():
@@ -142,16 +141,31 @@ def show_graph():
 
 fenetre = Tk()
 fenetre.title("Data tp 1")
-fenetre.geometry('500x500')
+fenetre.geometry('800x800')
+canvas=Canvas(fenetre,bg='#FFFFFF',width=800,height=800,scrollregion=(0,0,1500,1500))
+hbar=Scrollbar(fenetre,orient=HORIZONTAL)
+hbar.pack(side=BOTTOM,fill=X)
+hbar.config(command=canvas.xview)
+vbar=Scrollbar(fenetre,orient=VERTICAL)
+vbar.pack(side=RIGHT,fill=Y)
+vbar.config(command=canvas.yview)
+canvas.config(width=800,height=800)
+canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
+canvas.pack(side=LEFT,expand=True,fill=BOTH)
 
-can = Frame(fenetre, width=400, height=400,bg='white')
-can.place(x=0, y=0, anchor="nw", width=385, height=460)
+for index, column in enumerate(df):
+    canvas.create_text(100,(index*120)+20,fill="black",font="Times 15 bold",
+                        text="Mois : "+str(column))
+    canvas.create_text(100,(index*120)+40,fill="black",font="Times 10",
+                            text="Moyenne : "+str(df[column].mean()))
+    canvas.create_text(100,(index*120)+60,fill="black",font="Times 10",
+    text="Ecart type : "+str(df[column].std()))
+    canvas.create_text(100,(index*120)+80,fill="black",font="Times 10",
+    text="Minimum : "+str(df[column].min()))
+    canvas.create_text(100,(index*120)+100,fill="black",font="Times 10",
+    text="Maximum : "+str(df[column].max()))
 
-
-labelIp = Label(can, text="Moyenne : "+str(moyenne),background="white",foreground="black")
-labelIp.place(x=0, y=0,width=150, height=30)
-
-b = Button(can, text="Afficher les graphiques", width=10, command=show_graph,background="white",foreground="black",activebackground="white",activeforeground="black")
-b.place(x=0, y=20, anchor="nw", width=150, height=30)
+b = Button(fenetre, text="Afficher les graphiques", width=10, command=show_graph,background="white",foreground="black",activebackground="white",activeforeground="black")
+b.place(x=300, y=20, anchor="nw", width=150, height=30)
 
 fenetre.mainloop()
