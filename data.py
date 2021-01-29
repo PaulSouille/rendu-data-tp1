@@ -43,10 +43,24 @@ class matplotlibSwitchGraphs:
         self.button_next = Button(self.master, text="Graphique suivant", command=self.next_graph)
         self.button_next.pack(side=BOTTOM)
     def draw_graph(self, month):
-        self.ax.clear()
-        self.ax.plot(df[month])
-        self.ax.set(title=month)
-        self.canvas.draw()
+
+        if(month == 'année'):
+            df_temp = pd.DataFrame(columns = ['Température'])
+            for column in df:
+                for value in df[column]:
+                    df_temp = df_temp.append({'Température':value},ignore_index=True)
+
+            df_temp.dropna()
+            self.ax.clear()
+            self.ax.plot(df_temp['Température'])
+            self.ax.set(title='Année')
+            self.canvas.draw()
+        else:
+            self.ax.clear()
+            self.ax.plot(df[month])
+            self.ax.set(title=month)
+            self.canvas.draw()
+        
 
     def on_key_press(event):
         key_press_handler(event, self.canvas, toolbar)
@@ -90,6 +104,9 @@ class matplotlibSwitchGraphs:
             self.graphIndex = 11
         elif self.graphIndex == 11:
             self.draw_graph('janvier')
+            self.graphIndex = 12
+        elif self.graphIndex == 12:
+            self.draw_graph('année')
             self.graphIndex = 0
 
     def back_graph(self):
@@ -128,6 +145,9 @@ class matplotlibSwitchGraphs:
             self.graphIndex = 1
         elif self.graphIndex == 1:
             self.draw_graph('janvier')
+            self.graphIndex = 12
+        elif self.graphIndex == 12:
+            self.draw_graph('année')
             self.graphIndex = 0
 
 
