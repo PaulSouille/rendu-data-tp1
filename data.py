@@ -48,10 +48,10 @@ class SnaptoCursor(object):
         y = self.y[indx]
         self.ly.set_xdata(x)
         self.marker.set_data([x],[y])
-        text = '%1.2f°C (day %1d)' % (y, x)
+        text = '%1.2f°C (current day %1d)' % (y, x)
         previousx = self.x[indx -1]
         previousy = self.y[indx -1]
-        self.txt.set_text(text + ' \n'+'%1.2f°C (day %1d)' % (previousy, previousx))
+        self.txt.set_text(text + ' \n'+'%1.2f°C (previous day %1d)' % (previousy, previousx))
         self.txt.set_position((x,y))
         self.txt.set_position((x,y))
 
