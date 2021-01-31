@@ -7,17 +7,58 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.backend_bases import key_press_handler
 import pandas as pd
+import math
 from pandas import ExcelWriter
 from pandas import ExcelFile
 df = pd.read_excel('Climat.xlsx', skiprows = 2,  nrows= 32, usecols = 'C:O')
+si = pd.read_excel("Climat.xlsx", sheet_name=0)
+
 df = df.drop(df.index[0])
 df.drop(df.columns[0], axis=1, inplace=True)
+df_temp = []
+df_temp = pd.DataFrame(columns = ['Température'])
+temperature = []
 
+
+for column in range(3, 15):
+    month_temperature=[]
+    for row in range(3, 34):
+        temperature_value = si.iloc[row, column]
+        if(not np.isnan(temperature_value)):
+            month_temperature.append(temperature_value)
+    temperature.append(month_temperature)
+
+
+flatten = lambda t: [item for sublist in t for item in sublist]
+
+class SnaptoCursor(object):
+    def __init__(self, ax, x, y):
+        self.ax = ax
+        self.ly = ax.axvline(color='k', alpha=0.2)
+        self.marker, = ax.plot([0],[0], marker="o", color="crimson", zorder=3) 
+        self.x = x
+        self.y = y
+        self.txt = ax.text(0.7, 0.9, '')
+
+    def mouse_move(self, event):
+        if not event.inaxes: return
+        x, y = event.xdata, event.ydata
+        indx = np.searchsorted(self.x, [x])[0]
+        x = self.x[indx]
+        y = self.y[indx]
+        self.ly.set_xdata(x)
+        self.marker.set_data([x],[y])
+        text = '%1.2f°C (day %1d)' % (y, x)
+        previousx = self.x[indx -1]
+        previousy = self.y[indx -1]
+        self.txt.set_text(text + ' \n'+'%1.2f°C (day %1d)' % (previousy, previousx))
+        self.txt.set_position((x,y))
+        self.txt.set_position((x,y))
+
+        self.ax.figure.canvas.draw_idle()
 
 def config_plot():
     fig, ax = plt.subplots()
-    ax.set(xlabel='time (s)', ylabel='voltage (mV)',
-           title='Graph One')
     return (fig, ax)
 
 class matplotlibSwitchGraphs:
@@ -43,24 +84,10 @@ class matplotlibSwitchGraphs:
         self.button_next = Button(self.master, text="Graphique suivant", command=self.next_graph)
         self.button_next.pack(side=BOTTOM)
     def draw_graph(self, month):
-
-        if(month == 'année'):
-            df_temp = pd.DataFrame(columns = ['Température'])
-            for column in df:
-                for value in df[column]:
-                    df_temp = df_temp.append({'Température':value},ignore_index=True)
-
-            df_temp.dropna()
-            self.ax.clear()
-            self.ax.plot(df_temp['Température'])
-            self.ax.set(title='Année')
-            self.canvas.draw()
-        else:
-            self.ax.clear()
-            self.ax.plot(df[month])
-            self.ax.set(title=month)
-            self.canvas.draw()
-        
+        self.ax.clear()
+        self.ax.plot(df[month])
+        self.ax.set(title=month)
+        self.canvas.draw()
 
     def on_key_press(event):
         key_press_handler(event, self.canvas, toolbar)
@@ -69,45 +96,42 @@ class matplotlibSwitchGraphs:
         self.master.quit() 
 
     def next_graph(self):
-        if self.graphIndex == 0:
-            self.draw_graph('février')
-            self.graphIndex = 1
-        elif self.graphIndex == 1:
-            self.draw_graph('mars')
-            self.graphIndex = 2
-        elif self.graphIndex == 2:
-            self.draw_graph('avril')
-            self.graphIndex = 3
-        elif self.graphIndex == 3:
-            self.draw_graph('mai')
-            self.graphIndex = 4
-        elif self.graphIndex == 4:
-            self.draw_graph('juin')
-            self.graphIndex = 5
-        elif self.graphIndex == 5:
-            self.draw_graph('juillet')
-            self.graphIndex = 6
-        elif self.graphIndex == 6:
-            self.draw_graph('août')
-            self.graphIndex = 7
-        elif self.graphIndex == 7:
-            self.draw_graph('septembre')
-            self.graphIndex = 8
-        elif self.graphIndex == 8:
-            self.draw_graph('octobre')
-            self.graphIndex = 9
-        elif self.graphIndex == 9:
-            self.draw_graph('novembre')
-            self.graphIndex = 10
-        elif self.graphIndex == 10:
-            self.draw_graph('décembre')
-            self.graphIndex = 11
-        elif self.graphIndex == 11:
-            self.draw_graph('janvier')
-            self.graphIndex = 12
-        elif self.graphIndex == 12:
-            self.draw_graph('année')
-            self.graphIndex = 0
+            if self.graphIndex == 0:
+                self.draw_graph('février')
+                self.graphIndex = 1
+            elif self.graphIndex == 1:
+                self.draw_graph('mars')
+                self.graphIndex = 2
+            elif self.graphIndex == 2:
+                self.draw_graph('avril')
+                self.graphIndex = 3
+            elif self.graphIndex == 3:
+                self.draw_graph('mai')
+                self.graphIndex = 4
+            elif self.graphIndex == 4:
+                self.draw_graph('juin')
+                self.graphIndex = 5
+            elif self.graphIndex == 5:
+                self.draw_graph('juillet')
+                self.graphIndex = 6
+            elif self.graphIndex == 6:
+                self.draw_graph('août')
+                self.graphIndex = 7
+            elif self.graphIndex == 7:
+                self.draw_graph('septembre')
+                self.graphIndex = 8
+            elif self.graphIndex == 8:
+                self.draw_graph('octobre')
+                self.graphIndex = 9
+            elif self.graphIndex == 9:
+                self.draw_graph('novembre')
+                self.graphIndex = 10
+            elif self.graphIndex == 10:
+                self.draw_graph('décembre')
+                self.graphIndex = 11
+            elif self.graphIndex == 11:
+                self.draw_graph('janvier')
+                self.graphIndex = 0
 
     def back_graph(self):
         if self.graphIndex == 0:
@@ -145,11 +169,7 @@ class matplotlibSwitchGraphs:
             self.graphIndex = 1
         elif self.graphIndex == 1:
             self.draw_graph('janvier')
-            self.graphIndex = 12
-        elif self.graphIndex == 12:
-            self.draw_graph('année')
             self.graphIndex = 0
-
 
 def main():
     root = Tk()
@@ -159,6 +179,25 @@ def main():
 def show_graph():
     main()
 
+def _on_mousewheel(event):
+    canvas.yview_scroll(-1*(int(event.delta/120)), "units")
+
+def show_annual_graph():
+    t = np.arange(0, 365, 1)
+    s = np.sin(2 * 2 * np.pi * t)
+    df_temp = pd.DataFrame(columns = ['Température'])
+    for column in df:
+        for value in df[column]:
+            df_temp = df_temp.append({'Température':value},ignore_index=True)
+    df_temp.dropna()
+    fig, ax = plt.subplots()
+    ax.plot(t, flatten(temperature),)
+    ax.set(title='Année')
+
+    snap_cursor = SnaptoCursor(ax, t, flatten(temperature))
+    fig.canvas.mpl_connect('motion_notify_event', snap_cursor.mouse_move)
+    plt.show()
+    
 fenetre = Tk()
 fenetre.title("Data tp 1")
 fenetre.geometry('800x800')
@@ -167,6 +206,8 @@ hbar=Scrollbar(fenetre,orient=HORIZONTAL)
 hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=canvas.xview)
 vbar=Scrollbar(fenetre,orient=VERTICAL)
+canvas.bind_all("<MouseWheel>", _on_mousewheel)
+
 vbar.pack(side=RIGHT,fill=Y)
 vbar.config(command=canvas.yview)
 canvas.config(width=800,height=800)
@@ -185,7 +226,10 @@ for index, column in enumerate(df):
     canvas.create_text(100,(index*120)+100,fill="black",font="Times 10",
     text="Maximum : "+str(df[column].max()))
 
-b = Button(fenetre, text="Afficher les graphiques", width=10, command=show_graph,background="white",foreground="black",activebackground="white",activeforeground="black")
-b.place(x=300, y=20, anchor="nw", width=150, height=30)
+b = Button(fenetre, text="Afficher les graphiques par mois", width=10, command=show_graph,background="white",foreground="black",activebackground="white",activeforeground="black")
+b.place(x=300, y=20, anchor="nw", width=200, height=30)
+
+b = Button(fenetre, text="Afficher le graphique sur l'année", width=10, command=show_annual_graph,background="white",foreground="black",activebackground="white",activeforeground="black")
+b.place(x=300, y=60, anchor="nw", width=200, height=30)
 
 fenetre.mainloop()
