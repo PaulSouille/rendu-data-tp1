@@ -18,7 +18,7 @@ df_error = pd.read_excel('Climat.xlsx', skiprows = 2,  nrows= 32, usecols = 'C:O
 df_error = df_error.drop(df_error.index[0])
 df_error.drop(df_error.columns[0], axis=1, inplace=True)
 
-def clear_data(array,month):
+def clear_data(array):
         for index,data in enumerate(array, start=1):
             # Get current value of our index
             current = data
@@ -104,7 +104,7 @@ class matplotlibSwitchGraphs:
             self.ax.set(title='Année')
             self.canvas.draw()
         else:
-            clear_data(df_error[month],month)
+            clear_data(df_error[month])
             self.ax.clear()
             self.ax.plot(df_error[month],label='Jeux de données erreur')
             self.ax.plot(df[month],label='Jeux de données propre')
@@ -223,19 +223,38 @@ canvas.config(width=800,height=800)
 canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 canvas.pack(side=LEFT,expand=True,fill=BOTH)
 
+canvas.create_text(100,20,fill="black",font="Times 15 bold",
+                        text="Jeux de données propre")
+
+canvas.create_text(400,20,fill="black",font="Times 15 bold",
+                        text="Jeux de données sales")
+
 for index, column in enumerate(df):
-    canvas.create_text(100,(index*120)+20,fill="black",font="Times 15 bold",
+    canvas.create_text(100,(index*120)+50,fill="black",font="Times 15 bold",
                         text="Mois : "+str(column))
-    canvas.create_text(100,(index*120)+40,fill="black",font="Times 10",
+    canvas.create_text(100,(index*120)+70,fill="black",font="Times 10",
                             text="Moyenne : "+str(df[column].mean()))
-    canvas.create_text(100,(index*120)+60,fill="black",font="Times 10",
+    canvas.create_text(100,(index*120)+90,fill="black",font="Times 10",
     text="Ecart type : "+str(df[column].std()))
-    canvas.create_text(100,(index*120)+80,fill="black",font="Times 10",
+    canvas.create_text(100,(index*120)+110,fill="black",font="Times 10",
     text="Minimum : "+str(df[column].min()))
-    canvas.create_text(100,(index*120)+100,fill="black",font="Times 10",
+    canvas.create_text(100,(index*120)+130,fill="black",font="Times 10",
     text="Maximum : "+str(df[column].max()))
 
+for index, column in enumerate(df_error):
+    clear_data(df_error[column])
+    canvas.create_text(400,(index*120)+50,fill="black",font="Times 15 bold",
+                        text="Mois : "+str(column))
+    canvas.create_text(400,(index*120)+70,fill="black",font="Times 10",
+                            text="Moyenne : "+str(df_error[column].mean()))
+    canvas.create_text(400,(index*120)+90,fill="black",font="Times 10",
+    text="Ecart type : "+str(df_error[column].std()))
+    canvas.create_text(400,(index*120)+110,fill="black",font="Times 10",
+    text="Minimum : "+str(df_error[column].min()))
+    canvas.create_text(400,(index*120)+130,fill="black",font="Times 10",
+    text="Maximum : "+str(df_error[column].max()))
+
 b = Button(fenetre, text="Afficher les graphiques", width=10, command=show_graph,background="white",foreground="black",activebackground="white",activeforeground="black")
-b.place(x=300, y=20, anchor="nw", width=150, height=30)
+b.place(x=600, y=20, anchor="nw", width=150, height=30)
 
 fenetre.mainloop()
