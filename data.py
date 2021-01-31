@@ -17,7 +17,7 @@ df = df.drop(df.index[0])
 df.drop(df.columns[0], axis=1, inplace=True)
 df_temp = []
 df_temp = pd.DataFrame(columns = ['Température'])
-temperature = []
+myTemp = []
 
 
 for column in range(3, 15):
@@ -26,7 +26,7 @@ for column in range(3, 15):
         temperature_value = si.iloc[row, column]
         if(not np.isnan(temperature_value)):
             month_temperature.append(temperature_value)
-    temperature.append(month_temperature)
+    myTemp.append(month_temperature)
 
 
 flatten = lambda t: [item for sublist in t for item in sublist]
@@ -191,10 +191,10 @@ def show_annual_graph():
             df_temp = df_temp.append({'Température':value},ignore_index=True)
     df_temp.dropna()
     fig, ax = plt.subplots()
-    ax.plot(t, flatten(temperature),)
+    ax.plot(t, flatten(myTemp),)
     ax.set(title='Année')
 
-    snap_cursor = SnaptoCursor(ax, t, flatten(temperature))
+    snap_cursor = SnaptoCursor(ax, t, flatten(myTemp))
     fig.canvas.mpl_connect('motion_notify_event', snap_cursor.mouse_move)
     plt.show()
     
