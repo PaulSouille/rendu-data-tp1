@@ -103,16 +103,19 @@ class matplotlibSwitchGraphs:
             self.draw_graph('décembre')
             self.graphIndex = 11
         elif self.graphIndex == 11:
-            self.draw_graph('janvier')
+            self.draw_graph('année')
             self.graphIndex = 12
         elif self.graphIndex == 12:
-            self.draw_graph('année')
+            self.draw_graph('janvier')
             self.graphIndex = 0
 
     def back_graph(self):
         if self.graphIndex == 0:
-            self.draw_graph('décembre')
+            self.draw_graph('année')
+            self.graphIndex = 12
+        elif self.graphIndex == 12:
             self.graphIndex = 11
+            self.draw_graph('décembre')
         elif self.graphIndex == 11:
             self.draw_graph('novembre')
             self.graphIndex = 10
@@ -145,9 +148,6 @@ class matplotlibSwitchGraphs:
             self.graphIndex = 1
         elif self.graphIndex == 1:
             self.draw_graph('janvier')
-            self.graphIndex = 12
-        elif self.graphIndex == 12:
-            self.draw_graph('année')
             self.graphIndex = 0
 
 
