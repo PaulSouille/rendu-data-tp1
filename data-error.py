@@ -58,8 +58,6 @@ def is_float_try(str):
 
 def config_plot():
     fig, ax = plt.subplots()
-    ax.set(xlabel='time (s)', ylabel='voltage (mV)',
-           title='Graph One')
     return (fig, ax)
 
 class matplotlibSwitchGraphs:
