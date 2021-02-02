@@ -236,7 +236,6 @@ canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 canvas.pack(side=LEFT,expand=True,fill=BOTH)
 
 for index,df in enumerate(array_df):
-    array_month = ['janvier','février',"mars","avril","mai","juin","juillet","aout","septembre","octobre","novembre","décembre"]
     score = 0
     df_temp = pd.DataFrame(columns = ['Température'])
     df_temp_base = pd.DataFrame(columns = ['Température'])
@@ -253,9 +252,9 @@ for index,df in enumerate(array_df):
             for value in df[column]:
                 df_temp_base = df_temp_base.append({'Température':value},ignore_index=True)
 
-        print(array_month[index_])
+
         canvas.create_text(100+(index*300),0+(index_+1)*100,fill="black",font="Times 12 bold",
-                text="Mois : "+str(array_month[index_]))
+                text="Mois : "+str(column))
         canvas.create_text(100+(index*300),20+(index_+1)*100,fill="black",font="Times 10",
                 text="Moyenne : "+str(df[column].mean()))
         canvas.create_text(100+(index*300),40+(index_+1)*100,fill="black",font="Times 10",

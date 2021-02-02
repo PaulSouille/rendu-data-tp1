@@ -236,7 +236,6 @@ canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 canvas.pack(side=LEFT,expand=True,fill=BOTH)
 
 for index,df in enumerate(array_df):
-    array_month = ['janvier','février',"mars","avril","mai","juin","juillet","aout","septembre","octobre","novembre","décembre"]
     score = 0
     df_temp = pd.DataFrame(columns = ['Température'])
     df_temp_base = pd.DataFrame(columns = ['Température'])
@@ -253,9 +252,18 @@ for index,df in enumerate(array_df):
             for value in df[column]:
                 df_temp_base = df_temp_base.append({'Température':value},ignore_index=True)
 
-        print(array_month[index_])
+        df_temp.dropna()
+        df_temp_base.dropna()
+        average_temp = df_temp['Température'].mean(axis=0)
+        average_temp_base = df_temp_base['Température'].mean(axis=0)
+
+        score = ((average_temp - average_temp_base)/average_temp_base) * 100
+        print(average_temp)
+        print(average_temp_base)
+        print(score)
+
         canvas.create_text(100+(index*300),0+(index_+1)*100,fill="black",font="Times 12 bold",
-                text="Mois : "+str(array_month[index_]))
+                text="Mois : "+str(column))
         canvas.create_text(100+(index*300),20+(index_+1)*100,fill="black",font="Times 10",
                 text="Moyenne : "+str(df[column].mean()))
         canvas.create_text(100+(index*300),40+(index_+1)*100,fill="black",font="Times 10",
@@ -264,16 +272,18 @@ for index,df in enumerate(array_df):
                 text="Minimum : "+str(df[column].min()))
         canvas.create_text(100+(index*300),80+(index_+1)*100,fill="black",font="Times 10",
                 text="Maximum : "+str(df[column].max()))
+        canvas.create_text(100+(index*300),100+(index_+1)*100,fill="black",font="Times 10",
+                        text="Score : "+str(score))
 
-    df_temp.dropna()
-    df_temp_base.dropna()
-    average_temp = df_temp['Température'].mean(axis=0)
-    average_temp_base = df_temp_base['Température'].mean(axis=0)
+df_temp.dropna()
+df_temp_base.dropna()
+average_temp = df_temp.mean()
+average_temp_base = df_temp_base.mean()
 
-    score = ((average_temp - average_temp_base)/average_temp_base) * 100
+print(((float(average_temp) - float(average_temp_base))/float(average_temp_base)) * 100)
 
-    canvas.create_text(100+(index*300),120+(index_+1)*100,fill="red",font="Times 15 bold",
-                    text="Score : "+str(abs(score))+"%")
+canvas.create_text(100+(index*300),10+(index_+1)*100,fill="black",font="Times 15 bold",
+                text="Score : "+str(score))
 
 b = Button(fenetre, text="Afficher les graphiques", width=10, command=show_graph,background="white",foreground="black",activebackground="white",activeforeground="black")
 b.place(x=20, y=20, anchor="nw", width=150, height=30)

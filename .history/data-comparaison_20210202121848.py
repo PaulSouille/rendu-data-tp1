@@ -17,7 +17,7 @@ df_base = pd.read_excel('base.xlsx', skiprows = 2,  nrows= 32, usecols = 'C:O',s
 array_df = []
 
 for file in array_csv:
-    df = pd.read_excel(file, skiprows = 2,  nrows= 32, usecols = 'C:O',sheet_name=1)
+    df = pd.read_excel(file, skiprows = 2,  nrows= 32, usecols = 'C:O',sheet_name=0)
     df = df.drop(df.index[0])
     df.drop(df.columns[0], axis=1, inplace=True)
     array_df.append(df)
@@ -217,8 +217,6 @@ def main():
 
 def show_graph():
     main()
-def _on_mousewheel(event):
-    canvas.yview_scroll(-1*(int(event.delta/120)), "units")
 
 fenetre = Tk()
 fenetre.title("Data tp 1")
@@ -228,7 +226,6 @@ hbar=Scrollbar(fenetre,orient=HORIZONTAL)
 hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=canvas.xview)
 vbar=Scrollbar(fenetre,orient=VERTICAL)
-canvas.bind_all("<MouseWheel>", _on_mousewheel)
 vbar.pack(side=RIGHT,fill=Y)
 vbar.config(command=canvas.yview)
 canvas.config(width=800,height=800)
@@ -236,44 +233,44 @@ canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 canvas.pack(side=LEFT,expand=True,fill=BOTH)
 
 for index,df in enumerate(array_df):
-    array_month = ['janvier','février',"mars","avril","mai","juin","juillet","aout","septembre","octobre","novembre","décembre"]
-    score = 0
-    df_temp = pd.DataFrame(columns = ['Température'])
-    df_temp_base = pd.DataFrame(columns = ['Température'])
 
-    for column in df_base:
-        for value in df_base[column]:
-            df_temp = df_temp.append({'Température':value},ignore_index=True)
 
     canvas.create_text(100+(index*300),60,fill="black",font="Times 15 bold",
                             text=array_csv[index])
 
     for index_, column in enumerate(df):
+        score = 0
+        df_temp = pd.DataFrame(columns = ['Température'])
+        df_temp_base = pd.DataFrame(columns = ['Température'])
+
         for column in df:
             for value in df[column]:
-                df_temp_base = df_temp_base.append({'Température':value},ignore_index=True)
+                print(value)
+                df_temp.append({'Température':value},ignore_index=True)
+                df_temp_base.append({'Température':value},ignore_index=True)
 
-        print(array_month[index_])
-        canvas.create_text(100+(index*300),0+(index_+1)*100,fill="black",font="Times 12 bold",
-                text="Mois : "+str(array_month[index_]))
-        canvas.create_text(100+(index*300),20+(index_+1)*100,fill="black",font="Times 10",
+        df_temp.dropna()
+        df_temp_base.dropna()
+        average_temp = df_temp.mean()
+        average_temp_base = df_temp_base.mean()
+
+        score = ((average_temp - average_temp_base)/average_temp_base) * 100
+
+        canvas.create_text(100+(index*300),10+(index_+1)*100,fill="black",font="Times 15 bold",
+                        text="Score : "+str(column))
+
+        canvas.create_text(100+(index*300),10+(index_+1)*100,fill="black",font="Times 15 bold",
+                text="Mois : "+str(column))
+        canvas.create_text(100+(index*300),30+(index_+1)*100,fill="black",font="Times 10",
                 text="Moyenne : "+str(df[column].mean()))
-        canvas.create_text(100+(index*300),40+(index_+1)*100,fill="black",font="Times 10",
+        canvas.create_text(100+(index*300),50+(index_+1)*100,fill="black",font="Times 10",
                 text="Ecart type : "+str(df[column].std()))
-        canvas.create_text(100+(index*300),60+(index_+1)*100,fill="black",font="Times 10",
+        canvas.create_text(100+(index*300),70+(index_+1)*100,fill="black",font="Times 10",
                 text="Minimum : "+str(df[column].min()))
-        canvas.create_text(100+(index*300),80+(index_+1)*100,fill="black",font="Times 10",
+        canvas.create_text(100+(index*300),90+(index_+1)*100,fill="black",font="Times 10",
                 text="Maximum : "+str(df[column].max()))
 
-    df_temp.dropna()
-    df_temp_base.dropna()
-    average_temp = df_temp['Température'].mean(axis=0)
-    average_temp_base = df_temp_base['Température'].mean(axis=0)
 
-    score = ((average_temp - average_temp_base)/average_temp_base) * 100
-
-    canvas.create_text(100+(index*300),120+(index_+1)*100,fill="red",font="Times 15 bold",
-                    text="Score : "+str(abs(score))+"%")
 
 b = Button(fenetre, text="Afficher les graphiques", width=10, command=show_graph,background="white",foreground="black",activebackground="white",activeforeground="black")
 b.place(x=20, y=20, anchor="nw", width=150, height=30)
