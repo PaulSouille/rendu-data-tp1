@@ -233,30 +233,18 @@ canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
 canvas.pack(side=LEFT,expand=True,fill=BOTH)
 
 for index,df in enumerate(array_df):
-
+    score = 0
+    df_temp = pd.DataFrame(columns = ['Température'])
+    df_temp_base = pd.DataFrame(columns = ['Température'])
 
     canvas.create_text(100+(index*300),60,fill="black",font="Times 15 bold",
                             text=array_csv[index])
 
     for index_, column in enumerate(df):
-        score = 0
-        df_temp = pd.DataFrame(columns = ['Température'])
-        df_temp_base = pd.DataFrame(columns = ['Température'])
-
         for column in df:
             for value in df[column]:
                 df_temp.append({'Température':value},ignore_index=True)
                 df_temp_base.append({'Température':value},ignore_index=True)
-
-        df_temp.dropna()
-        df_temp_base.dropna()
-        average_temp = df_temp.mean()
-        average_temp_base = df_temp_base.mean()
-
-        score = ((average_temp - average_temp_base)/average_temp_base) * 100
-
-        canvas.create_text(100+(index*300),10+(index_+1)*100,fill="black",font="Times 15 bold",
-                        text="Score : "+str(column))
 
         canvas.create_text(100+(index*300),10+(index_+1)*100,fill="black",font="Times 15 bold",
                 text="Mois : "+str(column))
@@ -269,7 +257,15 @@ for index,df in enumerate(array_df):
         canvas.create_text(100+(index*300),90+(index_+1)*100,fill="black",font="Times 10",
                 text="Maximum : "+str(df[column].max()))
 
+df_temp.dropna()
+df_temp_base.dropna()
+average_temp = df_temp.mean()
+average_temp_base = df_temp_base.mean()
 
+print(((float(average_temp) - float(average_temp_base))/float(average_temp_base)) * 100)
+
+canvas.create_text(100+(index*300),10+(index_+1)*100,fill="black",font="Times 15 bold",
+                text="Score : "+str(score))
 
 b = Button(fenetre, text="Afficher les graphiques", width=10, command=show_graph,background="white",foreground="black",activebackground="white",activeforeground="black")
 b.place(x=20, y=20, anchor="nw", width=150, height=30)
