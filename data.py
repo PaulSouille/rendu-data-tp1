@@ -207,7 +207,6 @@ hbar.pack(side=BOTTOM,fill=X)
 hbar.config(command=canvas.xview)
 vbar=Scrollbar(fenetre,orient=VERTICAL)
 canvas.bind_all("<MouseWheel>", _on_mousewheel)
-
 vbar.pack(side=RIGHT,fill=Y)
 vbar.config(command=canvas.yview)
 canvas.config(width=800,height=800)
